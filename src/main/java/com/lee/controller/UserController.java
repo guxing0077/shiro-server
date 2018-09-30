@@ -20,7 +20,7 @@ public class UserController extends BaseController {
     private UserService userService;
 
     @RequiresPermissions("user:list")
-    @ApiImplicitParam(name = "tokenKey", paramType = "header")
+    @ApiImplicitParam(name = "token", paramType = "header")
     @GetMapping("security/list")
     public JsonRes<User> users(){
         return success(userService.selectList(new EntityWrapper<User>()));

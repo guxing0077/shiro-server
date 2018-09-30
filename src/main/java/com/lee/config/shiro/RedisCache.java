@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-@Component
+//@Component
 public class RedisCache<K, V> implements Cache<K, V> {
 
     private final static Logger logger = LoggerFactory.getLogger(RedisCache.class);

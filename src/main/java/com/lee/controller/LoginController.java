@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class IndexController extends BaseController {
+public class LoginController extends BaseController {
 
     @Autowired
     private UserService userService;

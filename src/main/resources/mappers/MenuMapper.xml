@@ -3,6 +3,11 @@
 <mapper namespace="com.lee.mapper.MenuMapper">
 
     <select id="findPermsByRoleId" resultType="java.lang.String">
-        select m.perms frorm t_user_role ur inner join t_menu m on ur.menu_id = m.role_id where m.perms != ''
+        SELECT
+            m.perms from t_role_menu rm
+        INNER JOIN t_menu m ON rm.menu_id = m.id
+        WHERE
+            m.perms != ''
+        AND rm.role_id = #{roleId}
     </select>
 </mapper>

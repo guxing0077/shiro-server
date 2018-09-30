@@ -4,6 +4,9 @@ package com.lee.config.shiro;
 import com.lee.entity.User;
 import com.lee.mapper.MenuMapper;
 import com.lee.mapper.UserMapper;
+import com.lee.utils.JwtHelper;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -11,6 +14,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,35 +23,44 @@ import java.util.Set;
 public class UserRealm extends AuthorizingRealm {
 
 	@Autowired
-	private UserMapper userMapper;
-
-	@Autowired
 	private MenuMapper menuMapper;
 
+	@Autowired
+	private RedisTemplate<String, String> redisTemplate;
+
 	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection arg0) {
-		User user = (User) SecurityUtils.getSubject();
-		Set<String> perms = menuMapper.findPermsByRoleId(user.getRoleId());
+	public boolean supports(AuthenticationToken token) {
+		return token instanceof JWTToken;
+	}
+
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+		Integer roleId = (Integer) principals.getPrimaryPrincipal();
+		Set<String> perms = menuMapper.findPermsByRoleId(roleId);
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		info.setStringPermissions(perms);
 		return info;
 	}
 
 	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		String username = (String) token.getPrincipal();
-		String password = new String((char[]) token.getCredentials());
-		//查询数据库用户信息
-		User param = new User(username);
-		User user = userMapper.selectOne(param);
-		// 账号不存在
-		if (user == null) {
-			throw new UnknownAccountException("账号或密码不正确");
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
+		String token = (String) authcToken.getPrincipal();
+		//校验token是否存在
+		Map<String, String> resultMap = JwtHelper.verifyToken(token);
+		if(resultMap.isEmpty()){
+			throw new AuthenticationException("missing or invalid token");
 		}
-		// 密码错误
-		if (!password.equals(user.getPassword())) {
-			throw new IncorrectCredentialsException("账号或密码不正确");
+		//获取名称
+		String userName = resultMap.get("userName");
+		if(StringUtils.isBlank(userName)){
+			throw new AuthenticationException("missing or invalid token");
 		}
-		return new SimpleAuthenticationInfo(user, password, getName());
+		//校验redis的token
+		String redisToken = redisTemplate.opsForValue().get(userName);
+		if(StringUtils.isBlank(token)||!redisToken.equals(token)){
+			throw new AuthenticationException("missing or invalid token");
+		}
+		String roleId = resultMap.get("roleId");
+		return new SimpleAuthenticationInfo(Integer.valueOf(roleId), token, userName);
 	}
 }

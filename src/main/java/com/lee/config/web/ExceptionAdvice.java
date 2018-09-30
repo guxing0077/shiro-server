@@ -1,6 +1,7 @@
 package com.lee.config.web;
 
 import com.lee.common.JsonRes;
+import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,4 +26,13 @@ public class ExceptionAdvice {
         jsonRes.setMsg(e.getMessage());
         return jsonRes;
     }
+
+    @ExceptionHandler(value = AuthorizationException.class)
+    public JsonRes handleAuthorizationException(Exception e, HttpServletRequest request, HttpServletResponse response) {
+        JsonRes jsonRes = new JsonRes();
+        jsonRes.setSuccess(false);
+        jsonRes.setMsg("没有权限");
+        return jsonRes;
+    }
+
 }
