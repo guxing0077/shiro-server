@@ -18,8 +18,8 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-//    @Autowired
-//    private RedisCacheManager cacheManager;
+    @Autowired
+    private RedisCacheManager cacheManager;
 
     @Bean
     public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
@@ -45,7 +45,7 @@ public class ShiroConfig {
 
         filterChainDefinitionMap.put("/druid/**", "anon");
         filterChainDefinitionMap.put("/login", "anon");
-        filterChainDefinitionMap.put("/logout", "logout");
+        filterChainDefinitionMap.put("/logout", "anno");
         filterChainDefinitionMap.put("/*/security/**", "jwt");
         filterChainDefinitionMap.put("/**", "jwt");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
@@ -60,7 +60,7 @@ public class ShiroConfig {
     @Bean
     public SecurityManager securityManager(){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-//        securityManager.setCacheManager(cacheManager);
+        securityManager.setCacheManager(cacheManager);
         securityManager.setRealm(userRealm());
         return securityManager;
     }

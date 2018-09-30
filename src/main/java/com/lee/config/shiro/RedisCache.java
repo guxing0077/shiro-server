@@ -14,13 +14,17 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-//@Component
+@Component
 public class RedisCache<K, V> implements Cache<K, V> {
 
     private final static Logger logger = LoggerFactory.getLogger(RedisCache.class);
 
     @Autowired
     private RedisTemplate<K, V> redisTemplate;
+
+    public RedisCache() {
+        super();
+    }
 
     @Override
     public V get(K k) throws CacheException {
@@ -29,10 +33,8 @@ public class RedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public V put(K k, V v) throws CacheException {
-        ValueOperations<K, V> operations = redisTemplate.opsForValue();
-        operations.set(k, v);
-        redisTemplate.expire(k, 1L, TimeUnit.MINUTES);
-        return null;
+        redisTemplate.opsForValue().set(k, v, 5L, TimeUnit.MINUTES);
+        return v;
     }
 
     @Override
