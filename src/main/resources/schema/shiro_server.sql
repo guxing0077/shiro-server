@@ -1,24 +1,22 @@
 /*
- Navicat Premium Data Transfer
+Navicat MySQL Data Transfer
 
- Source Server         : localhost
- Source Server Type    : MySQL
- Source Server Version : 50718
- Source Host           : localhost
- Source Database       : shiro-server
+Source Server         : tecent
+Source Server Version : 50721
+Source Host           : 118.25.52.243:3306
+Source Database       : shiro_server
 
- Target Server Type    : MySQL
- Target Server Version : 50718
- File Encoding         : utf-8
+Target Server Type    : MYSQL
+Target Server Version : 50721
+File Encoding         : 65001
 
- Date: 09/29/2018 23:51:38 PM
+Date: 2018-10-16 14:39:09
 */
 
-SET NAMES utf8;
-SET FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
---  Table structure for `t_menu`
+-- Table structure for t_menu
 -- ----------------------------
 DROP TABLE IF EXISTS `t_menu`;
 CREATE TABLE `t_menu` (
@@ -31,14 +29,12 @@ CREATE TABLE `t_menu` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='菜单权限表';
 
 -- ----------------------------
---  Records of `t_menu`
+-- Records of t_menu
 -- ----------------------------
-BEGIN;
 INSERT INTO `t_menu` VALUES ('1', '查询用户列表信息', '/user/security/list', 'user:list', '1');
-COMMIT;
 
 -- ----------------------------
---  Table structure for `t_role`
+-- Table structure for t_role
 -- ----------------------------
 DROP TABLE IF EXISTS `t_role`;
 CREATE TABLE `t_role` (
@@ -48,14 +44,12 @@ CREATE TABLE `t_role` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='角色表';
 
 -- ----------------------------
---  Records of `t_role`
+-- Records of t_role
 -- ----------------------------
-BEGIN;
 INSERT INTO `t_role` VALUES ('1', 'dev');
-COMMIT;
 
 -- ----------------------------
---  Table structure for `t_role_menu`
+-- Table structure for t_role_menu
 -- ----------------------------
 DROP TABLE IF EXISTS `t_role_menu`;
 CREATE TABLE `t_role_menu` (
@@ -66,14 +60,12 @@ CREATE TABLE `t_role_menu` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='权限角色表';
 
 -- ----------------------------
---  Records of `t_role_menu`
+-- Records of t_role_menu
 -- ----------------------------
-BEGIN;
 INSERT INTO `t_role_menu` VALUES ('1', '1', '1');
-COMMIT;
 
 -- ----------------------------
---  Table structure for `t_user`
+-- Table structure for t_user
 -- ----------------------------
 DROP TABLE IF EXISTS `t_user`;
 CREATE TABLE `t_user` (
@@ -81,14 +73,14 @@ CREATE TABLE `t_user` (
   `user_name` varchar(255) NOT NULL COMMENT '登录用户名',
   `password` varchar(255) NOT NULL COMMENT '登录密码，md2次加密',
   `role_id` int(11) NOT NULL COMMENT '角色id',
+  `sex` tinyint(4) DEFAULT NULL COMMENT '性别，0-女，1-男',
+  `tel` varchar(20) DEFAULT NULL COMMENT '电话号码',
+  `address` varchar(255) DEFAULT NULL COMMENT '住址',
+  `name` varchar(80) DEFAULT NULL COMMENT '个人姓名',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 -- ----------------------------
---  Records of `t_user`
+-- Records of t_user
 -- ----------------------------
-BEGIN;
-INSERT INTO `t_user` VALUES ('1', 'dev', '123456', '1');
-COMMIT;
-
-SET FOREIGN_KEY_CHECKS = 1;
+INSERT INTO `t_user` VALUES ('1', 'dev', '123456', '1', '0', '18709249887', '陕西省西安市', '李文亮');
